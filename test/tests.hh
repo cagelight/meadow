@@ -12,4 +12,7 @@ static inline T rndnum(T min, T max) {
 	return std::uniform_int_distribution<T> {min, max} (rng);
 }
 
+#define TEST(expr) { if (!(expr)) { log << meadow::strf("TEST FAILURE [%s]: TEST EXPRESSION: (%s)", _here, #expr); std::exit(1); }}
+
 void test_aeon();
+void test_buffer();

@@ -2,9 +2,7 @@
 
 #include "../src/meadow/aeon.hh"
 
-using aeon = meadow::aeon::object;
-
-#define TEST(expr) { if (!(expr)) { log << meadow::strf("TEST FAILURE [%s]: TEST EXPRESSION: (%s)", _here, #expr); std::exit(1); }}
+using aeon = meadow::aeon;
 
 void test_aeon() {
 	
@@ -105,6 +103,7 @@ void test_aeon() {
 		TEST(testc[4][0] == 5)
 		TEST(testc[4][1] == "bar")
 		TEST(testc[4][2].as_floating() == 22.22)
+		TEST(testc == aeon::deserialize_json(testc.serialize_json()))
 	}
 	
 	{
@@ -115,6 +114,7 @@ void test_aeon() {
 		TEST(testc["num"] == 700)
 		TEST(testc["ary"][2] == 92)
 		TEST(testc["num"].as_string() == "700")
+		TEST(testc == aeon::deserialize_json(testc.serialize_json()))
 	}
 	
 	// BRUTE FORCE SEGFAULT TESTING
@@ -122,7 +122,7 @@ void test_aeon() {
 		constexpr char gen_chars [] = {"abcdefg0123456789\"\r\n ,:.[][][][][][]{}{}{}{}{}{}{}{}{}{}{}"};
 		for (size_t i = 0; i < 100000; i++) {
 			std::ostringstream ss;
-			for (size_t j = 0; j < 512; j++) {
+			for (size_t j = 0; j < 32; j++) {
 				ss << gen_chars[rndnum<size_t>(0, sizeof(gen_chars) - 1)];
 			}
 			try {
@@ -130,6 +130,4 @@ void test_aeon() {
 			} catch (...) {}
 		}
 	}
-	
-	log << "ALL TESTS SUCCESSFUL";
 }

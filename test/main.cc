@@ -5,7 +5,8 @@
 #include <map>
 
 static std::map<std::string, void(*)()> const tests {
-	{"aeon", test_aeon}
+	{"aeon", test_aeon},
+	{"buffer", test_buffer}
 };
 
 void print_usage() {
@@ -25,6 +26,7 @@ int main(int argc, char * * argv) {
 		if (iter == tests.end()) print_usage();
 		else try {
 			iter->second();
+			log << "ALL TESTS SUCCESSFUL";
 		} catch (std::exception const & e) {
 			log << "EXCEPTION OCCURRED DURING TESTING:\n" << e.what();
 			std::exit(1);

@@ -4,15 +4,15 @@
 #include <locale>
 #include <sstream>
 
-using namespace meadow::aeon;
+using namespace meadow;
 
-static object const null_object;
+static aeon const null_aeon;
 
 // ================================================================
 // GENERAL
 // ================================================================
 
-size_t object::size() const {
+size_t aeon::size() const {
 	struct conversion_visitor {
 		constexpr size_t operator () (nul_t const &  ) { return 0; }
 		constexpr size_t operator () (bool  const &  ) { return 1; }
@@ -33,12 +33,12 @@ size_t object::size() const {
 // ----------------
 // BOOLEAN
 // ----------------
-bool & object::boolean() {
+bool & aeon::boolean() {
 	if (is_bool()) return get<bool>();
 	else return value->emplace<bool>();
 }
 
-bool const & object::boolean() const {
+bool const & aeon::boolean() const {
 	static constexpr bool default_value = false;
 	if (is_bool()) return get<bool>();
 	else return default_value;
@@ -47,12 +47,12 @@ bool const & object::boolean() const {
 // ----------------
 // INTEGER
 // ----------------
-int_t & object::integer() {
+aeon::int_t & aeon::integer() {
 	if (is_integer()) return get<int_t>();
 	else return value->emplace<int_t>();
 }
 
-int_t const & object::integer() const {
+aeon::int_t const & aeon::integer() const {
 	static constexpr int_t default_value = 0;
 	if (is_integer()) return get<int_t>();
 	else return default_value;
@@ -61,12 +61,12 @@ int_t const & object::integer() const {
 // ----------------
 // FLOATING
 // ----------------
-flt_t & object::floating() {
+aeon::flt_t & aeon::floating() {
 	if (is_floating()) return get<flt_t>();
 	else return value->emplace<flt_t>();
 }
 
-flt_t const & object::floating() const {
+aeon::flt_t const & aeon::floating() const {
 	static constexpr flt_t default_value = 0.0;
 	if (is_floating()) return get<flt_t>();
 	else return default_value;
@@ -75,12 +75,12 @@ flt_t const & object::floating() const {
 // ----------------
 // FLOATING
 // ----------------
-str_t & object::string() {
+aeon::str_t & aeon::string() {
 	if (is_string()) return get<str_t>();
 	else return value->emplace<str_t>();
 }
 
-str_t const & object::string() const {
+aeon::str_t const & aeon::string() const {
 	static str_t const default_value = "";
 	if (is_string()) return get<str_t>();
 	else return default_value;
@@ -89,12 +89,12 @@ str_t const & object::string() const {
 // ----------------
 // ARRAY
 // ----------------
-ary_t & object::array() {
+aeon::ary_t & aeon::array() {
 	if (is_array()) return get<ary_t>();
 	else return value->emplace<ary_t>();
 }
 
-ary_t const & object::array() const {
+aeon::ary_t const & aeon::array() const {
 	static ary_t const default_value;
 	if (is_array()) return get<ary_t>();
 	else return default_value;
@@ -103,12 +103,12 @@ ary_t const & object::array() const {
 // ----------------
 // ARRAY
 // ----------------
-map_t & object::map() {
+aeon::map_t & aeon::map() {
 	if (is_map()) return get<map_t>();
 	else return value->emplace<map_t>();
 }
 
-map_t const & object::map() const {
+aeon::map_t const & aeon::map() const {
 	static map_t const default_value;
 	if (is_map()) return get<map_t>();
 	else return default_value;
@@ -121,7 +121,7 @@ map_t const & object::map() const {
 // ----------------
 // BOOLEAN
 // ----------------
-bool object::as_boolean() const {
+bool aeon::as_boolean() const {
 	struct conversion_visitor {
 		constexpr bool operator () (nul_t const &  ) { return false; }
 		constexpr bool operator () (bool  const & v) { return v; }
@@ -138,7 +138,7 @@ bool object::as_boolean() const {
 // ----------------
 // INTEGER
 // ----------------
-int_t object::as_integer() const {
+aeon::int_t aeon::as_integer() const {
 	struct conversion_visitor {
 		constexpr int_t operator () (nul_t const &  ) { return 0; }
 		constexpr int_t operator () (bool  const & v) { return v; }
@@ -155,7 +155,7 @@ int_t object::as_integer() const {
 // ----------------
 // FLOAT
 // ----------------
-flt_t object::as_floating() const {
+aeon::flt_t aeon::as_floating() const {
 	struct conversion_visitor {
 		constexpr flt_t operator () (nul_t const &  ) { return 0; }
 		constexpr flt_t operator () (bool  const & v) { return v; }
@@ -172,7 +172,7 @@ flt_t object::as_floating() const {
 // ----------------
 // STRING
 // ----------------
-str_t object::as_string() const {
+aeon::str_t aeon::as_string() const {
 	struct conversion_visitor {
 		inline str_t operator () (nul_t const &  ) { return "null"; }
 		inline str_t operator () (bool  const & v) { return v ? "true" : "false"; }
@@ -194,7 +194,7 @@ str_t object::as_string() const {
 // SERIALIZE JSON
 // ----------------
 
-std::string object::jsonify_string(str_t const & str) {
+std::string aeon::jsonify_string(str_t const & str) {
 	std::ostringstream ss;
 	
 	ss << '"';
@@ -217,7 +217,7 @@ std::string object::jsonify_string(str_t const & str) {
 	return ss.str();
 }
 
-std::string object::serialize_json() const {
+std::string aeon::serialize_json() const {
 	struct conversion_visitor {
 		inline std::string operator () (nul_t const &  ) { return "null"; }
 		inline std::string operator () (bool  const & v) { return v ? "true" : "false"; }
@@ -257,8 +257,8 @@ std::string object::serialize_json() const {
 // DESERIALIZE JSON
 // ----------------
 
-#define throw_eoi throw object::deserialize_exception {"unexpected end of input"}
-#define throw_ii throw object::deserialize_exception {"invalid input"}
+#define throw_eoi throw aeon::deserialize_exception {"unexpected end of input"}
+#define throw_ii throw aeon::deserialize_exception {"invalid input"}
 
 static inline void json_skip_irrelevant(char const * & cur, char const * end) {
 	for (;cur < end; cur++) switch (*cur) {
@@ -270,7 +270,7 @@ static inline void json_skip_irrelevant(char const * & cur, char const * end) {
 	throw_eoi;
 }
 
-static inline str_t json_parse_string(char const * & cur, char const * end) {
+static inline aeon::str_t json_parse_string(char const * & cur, char const * end) {
 	cur++;
 	char const * begin = cur;
 	bool escaped = false;
@@ -298,31 +298,31 @@ static inline str_t json_parse_string(char const * & cur, char const * end) {
 	return ss.str();
 };
 
-static inline object deserialize_json_r(char const * & cur, char const * end) {
+static inline aeon deserialize_json_r(char const * & cur, char const * end) {
 	if (cur == end) throw_eoi;
 	
-	static constexpr auto validate_null = [](char const * & cur, char const * end) -> object {
+	static constexpr auto validate_null = [](char const * & cur, char const * end) -> aeon {
 		if (cur+3 >= end) throw_eoi;
 		if (*(cur+1) != 'u' || *(cur+2) != 'l' || *(cur+3) != 'l') throw_ii;
 		cur += 4;
-		return null_object;
+		return {};
 	};
 	
-	static constexpr auto validate_true = [](char const * & cur, char const * end) -> object {
+	static constexpr auto validate_true = [](char const * & cur, char const * end) -> aeon {
 		if (cur+3 >= end) throw_eoi;
 		if (*(cur+1) != 'r' || *(cur+2) != 'u' || *(cur+3) != 'e') throw_ii;
 		cur += 4;
 		return true;
 	};
 	
-	static constexpr auto validate_false = [](char const * & cur, char const * end) -> object {
+	static constexpr auto validate_false = [](char const * & cur, char const * end) -> aeon {
 		if (cur+4 >= end) throw_eoi;
 		if (*(cur+1) != 'a' || *(cur+2) != 'l' || *(cur+3) != 's' || *(cur+4) != 'e') throw_ii;
 		cur += 5;
 		return false;
 	};
 	
-	static constexpr auto parse_numerical = [](char const * & cur, char const * end) -> object {
+	static constexpr auto parse_numerical = [](char const * & cur, char const * end) -> aeon {
 		char const * begin = cur;
 		char const * exp = nullptr;
 		bool is_floating = false;
@@ -353,9 +353,9 @@ static inline object deserialize_json_r(char const * & cur, char const * end) {
 		else return std::strtoll(numstr.c_str(), nullptr, 10);
 	};
 	
-	static constexpr auto parse_array = [](char const * & cur, char const * end) -> object {
+	static constexpr auto parse_array = [](char const * & cur, char const * end) -> aeon {
 		cur++;
-		object ret; ret.array();
+		aeon ret; ret.array();
 		for (;cur < end;) {
 			json_skip_irrelevant(cur, end);
 			if (*cur == ']') {
@@ -367,16 +367,16 @@ static inline object deserialize_json_r(char const * & cur, char const * end) {
 		throw_eoi;
 	};
 	
-	static constexpr auto parse_map = [](char const * & cur, char const * end) -> object {
+	static constexpr auto parse_map = [](char const * & cur, char const * end) -> aeon {
 		cur++;
-		object ret; ret.map();
+		aeon ret; ret.map();
 		for (;cur < end;) {
 			json_skip_irrelevant(cur, end);
 			if (*cur == '}') {
 				cur++;
 				return ret;
 			}
-			str_t str = json_parse_string(cur, end);
+			aeon::str_t str = json_parse_string(cur, end);
 			json_skip_irrelevant(cur, end);
 			ret[str] = deserialize_json_r(cur, end);
 		}
@@ -403,7 +403,7 @@ static inline object deserialize_json_r(char const * & cur, char const * end) {
 	throw_eoi;
 }
 
-object object::deserialize_json(char const * cur, char const * end) {
+aeon aeon::deserialize_json(char const * cur, char const * end) {
 	return deserialize_json_r(cur, end);
 }
 
@@ -414,29 +414,29 @@ object object::deserialize_json(char const * cur, char const * end) {
 // ----------------
 // ARRAY
 // ----------------
-object & object::operator [] (size_t idx) {
+aeon & aeon::operator [] (size_t idx) {
 	auto & ary = array();
 	if (idx >= ary.size()) ary.resize(idx + 1);
 	return ary[idx];
 }
 
-object const & object::operator [] (size_t idx) const {
+aeon const & aeon::operator [] (size_t idx) const {
 	auto const & ary = array();
-	if (idx >= ary.size()) return null_object;
+	if (idx >= ary.size()) return null_aeon;
 	return ary[idx];
 }
 
 // ----------------
 // MAP
 // ----------------
-object & object::operator [] (str_t const & key) {
+aeon & aeon::operator [] (str_t const & key) {
 	return map()[key];
 }
 
-object const & object::operator [] (str_t const & key) const {
+aeon const & aeon::operator [] (str_t const & key) const {
 	auto const & val = map();
 	auto i = val.find(key);
-	if (i == val.end()) return null_object;
+	if (i == val.end()) return null_aeon;
 	else return i->second;
 }
 

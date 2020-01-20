@@ -1,23 +1,47 @@
 #pragma once
 
+/*
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+--------------------------------------------------------------------------------------------------------------------------------
+================================================================================================================================
+
+    ▄████████         ▄████████       ▄██████▄       ███▄▄▄▄   
+   ███    ███        ███    ███      ███    ███      ███▀▀▀██▄ 
+   ███    ███        ███    █▀       ███    ███      ███   ███ 
+   ███    ███       ▄███▄▄▄          ███    ███      ███   ███ 
+ ▀███████████      ▀▀███▀▀▀          ███    ███      ███   ███ 
+   ███    ███        ███    █▄       ███    ███      ███   ███ 
+   ███    ███        ███    ███      ███    ███      ███   ███ 
+   ███    █▀         ██████████       ▀██████▀        ▀█   █▀  
+  
+ <================================================================>
+
+JSON interface -- serializer and deserializer
+
+================================================================================================================================
+--------------------------------------------------------------------------------------------------------------------------------
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+*/
+
 #include <memory>
 #include <string>
 #include <unordered_map>
 #include <variant>
 #include <vector>
 
-namespace meadow::aeon {
-	struct object;
+namespace meadow {
+	struct aeon;
+}
+
+struct meadow::aeon final {
 	
 	using nul_t = std::monostate;
 	using int_t = int_fast64_t;
 	using flt_t = double;
 	using str_t = std::string;
-	using ary_t = std::vector<object>;
-	using map_t = std::unordered_map<str_t, object>;
-}
-
-struct meadow::aeon::object final {
+	using ary_t = std::vector<aeon>;
+	using map_t = std::unordered_map<str_t, aeon>;
+	
 private:
 	using variant_t = std::variant<nul_t, bool, int_t, flt_t, str_t, ary_t, map_t>;
 public:
@@ -27,19 +51,19 @@ public:
 	// CONSTRUCTORS
 	// ================================================================
 	
-	inline object() : value(std::make_unique<variant_t>()) {}
+	inline aeon() : value(std::make_unique<variant_t>()) {}
 	template <typename T, std::enable_if_t<std::is_same<T, bool>::value, int> = 0>
-	inline object(bool const & v) : value(std::make_unique<variant_t>(v)) {}
+	inline aeon(bool const & v) : value(std::make_unique<variant_t>(v)) {}
 	template <typename T, std::enable_if_t<std::is_integral<T>::value, int> = 0>
-	inline object(T const & v) : value(std::make_unique<variant_t>(static_cast<int_t>(v))) {}
+	inline aeon(T const & v) : value(std::make_unique<variant_t>(static_cast<int_t>(v))) {}
 	template <typename T, std::enable_if_t<std::is_floating_point<T>::value, int> = 0>
-	inline object(T const & v) : value(std::make_unique<variant_t>(static_cast<flt_t>(v))) {}
-	inline object(str_t const & v) : value(std::make_unique<variant_t>(v)) {}
-	inline object(ary_t const & v) : value(std::make_unique<variant_t>(v)) {}
-	inline object(map_t const & v) : value(std::make_unique<variant_t>(v)) {}
+	inline aeon(T const & v) : value(std::make_unique<variant_t>(static_cast<flt_t>(v))) {}
+	inline aeon(str_t const & v) : value(std::make_unique<variant_t>(v)) {}
+	inline aeon(ary_t const & v) : value(std::make_unique<variant_t>(v)) {}
+	inline aeon(map_t const & v) : value(std::make_unique<variant_t>(v)) {}
 	
-	inline object(object const & other) : value(std::make_unique<variant_t>(*other.value)) {}
-	inline object(object && other) : value(std::make_unique<variant_t>(std::move(*other.value))) {}
+	inline aeon(aeon const & other) : value(std::make_unique<variant_t>(*other.value)) {}
+	inline aeon(aeon && other) : value(std::make_unique<variant_t>(std::move(*other.value))) {}
 	
 	// ================================================================
 	// GENERAL
@@ -51,13 +75,13 @@ public:
 	// TYPE CHECKS
 	// ================================================================
 	
-	[[nodiscard]] inline bool is_null()    const { return holds<nul_t>(); }
-	[[nodiscard]] inline bool is_bool()    const { return holds<bool>(); } 
-	[[nodiscard]] inline bool is_integer() const { return holds<int_t>(); }
-	[[nodiscard]] inline bool is_floating()   const { return holds<flt_t>(); }
-	[[nodiscard]] inline bool is_string()  const { return holds<str_t>(); }
-	[[nodiscard]] inline bool is_array()   const { return holds<ary_t>(); }
-	[[nodiscard]] inline bool is_map()     const { return holds<map_t>(); }
+	[[nodiscard]] inline bool is_null()     const { return holds<nul_t>(); }
+	[[nodiscard]] inline bool is_bool()     const { return holds<bool>();  } 
+	[[nodiscard]] inline bool is_integer()  const { return holds<int_t>(); }
+	[[nodiscard]] inline bool is_floating() const { return holds<flt_t>(); }
+	[[nodiscard]] inline bool is_string()   const { return holds<str_t>(); }
+	[[nodiscard]] inline bool is_array()    const { return holds<ary_t>(); }
+	[[nodiscard]] inline bool is_map()      const { return holds<map_t>(); }
 	
 	// ================================================================
 	// TYPE SETTERS AND UNDERLYING ACCESS
@@ -104,32 +128,32 @@ public:
 	[[nodiscard]] static std::string jsonify_string(std::string const & str);
 	
 	[[nodiscard]] std::string serialize_json() const;
-	[[nodiscard]] static object deserialize_json(char const * begin, char const * end);
+	[[nodiscard]] static aeon deserialize_json(char const * begin, char const * end);
 	
-	[[nodiscard]] inline static object deserialize_json(std::string const & str) { return deserialize_json(str.c_str(), str.c_str() + str.size()); }
+	[[nodiscard]] inline static aeon deserialize_json(std::string const & str) { return deserialize_json(str.c_str(), str.c_str() + str.size()); }
 	
 	// ================================================================
 	// OPERATORS
 	// ================================================================
 	
-	inline object & operator = (object const & other) { *value = *other.value; return *this; }
-	inline object & operator = (object && other) { *value = std::move(*other.value); return *this; }
+	inline aeon & operator = (aeon const & other) { *value = *other.value; return *this; }
+	inline aeon & operator = (aeon && other) { *value = std::move(*other.value); return *this; }
 	
 	template <typename T, std::enable_if_t<std::is_same<T, bool>::value, int> = 0>
-	inline object & operator = (bool const & v) { boolean() = v; return *this; }
+	inline aeon & operator = (bool const & v) { boolean() = v; return *this; }
 	template <typename T, std::enable_if_t<std::is_integral<T>::value, int> = 0>
-	inline object & operator = (T const & v) { integer() = static_cast<int_t>(v); return *this; }
+	inline aeon & operator = (T const & v) { integer() = static_cast<int_t>(v); return *this; }
 	template <typename T, std::enable_if_t<std::is_floating_point<T>::value, int> = 0>
-	inline object & operator = (T const & v) { floating() = static_cast<flt_t>(v); return *this; }
-	inline object & operator = (str_t const & v) { string() = v; return *this; }
+	inline aeon & operator = (T const & v) { floating() = static_cast<flt_t>(v); return *this; }
+	inline aeon & operator = (str_t const & v) { string() = v; return *this; }
 	
-	[[nodiscard]] object & operator [] (size_t);
-	[[nodiscard]] object const & operator[] (size_t) const;
+	[[nodiscard]] aeon & operator [] (size_t);
+	[[nodiscard]] aeon const & operator[] (size_t) const;
 	
-	[[nodiscard]] object & operator [] (str_t const &);
-	[[nodiscard]] object const & operator [] (str_t const &) const;
+	[[nodiscard]] aeon & operator [] (str_t const &);
+	[[nodiscard]] aeon const & operator [] (str_t const &) const;
 	
-	[[nodiscard]] bool operator == (object const & other) const { return *value == *other.value; }
+	[[nodiscard]] bool operator == (aeon const & other) const { return *value == *other.value; }
 	
 	template <typename T, std::enable_if_t<std::is_same<T, bool>::value, int> = 0>
 	[[nodiscard]] bool operator == (bool const & v) const { return is_bool() ? v == get<bool>() : false; }
