@@ -26,9 +26,9 @@ int main(int argc, char * * argv) {
 		if (iter == tests.end()) print_usage();
 		else try {
 			iter->second();
-			log << "ALL TESTS SUCCESSFUL";
+			tlog << "ALL TESTS SUCCESSFUL";
 		} catch (std::exception const & e) {
-			log << "EXCEPTION OCCURRED DURING TESTING:\n" << e.what();
+			tlog << "EXCEPTION OCCURRED DURING TESTING:\n" << e.what();
 			std::exit(1);
 		}
 	}
