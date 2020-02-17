@@ -1,6 +1,5 @@
 #pragma once
 
-#include <ctgmath>
 #include <memory>
 
 namespace meadow {
