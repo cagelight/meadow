@@ -1,6 +1,6 @@
 #include "tests.hh"
 
-#include "../src/meadow/aeon.hh"
+#include "meadow/aeon.hh"
 
 using aeon = meadow::aeon;
 

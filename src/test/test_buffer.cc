@@ -1,6 +1,6 @@
 #include "tests.hh"
 
-#include "../src/meadow/buffer.hh"
+#include "meadow/buffer.hh"
 
 using namespace meadow;
 

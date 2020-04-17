@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../src/meadow/strop.hh"
+#include "meadow/strop.hh"
 
 #include <random>
 
