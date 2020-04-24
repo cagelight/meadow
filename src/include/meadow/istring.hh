@@ -9,6 +9,7 @@
 ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═════╝ ╚══════╝╚═╝  ╚═╝     ╚═════╝ ╚═╝  ╚═══╝╚══════╝╚═╝   
 */
 
+#include <ostream>
 #include <string>
 #include <string_view>
 
@@ -45,12 +46,20 @@ namespace meadow {
 	using istring = std::basic_string<char, insensitive_char_traits>;
 	using istring_view = std::basic_string_view<char, insensitive_char_traits>;
 
+	static inline std::string i2s(istring const & str) { return std::string { str.data(), str.size() }; }
+	static inline std::string i2s(istring_view const & str) { return std::string { str.data(), str.size() }; }
+	static inline std::string_view i2sv(istring const & str) { return std::string_view { str.data(), str.size() }; }
+	static inline std::string_view i2sv(istring_view const & str) { return std::string_view { str.data(), str.size() }; }
+	static inline istring s2i(std::string const & str) { return istring { str.data(), str.size() }; }
+	static inline istring s2i(std::string_view const & str) { return istring { str.data(), str.size() }; }
+	static inline istring_view s2iv(std::string const & str) { return istring_view { str.data(), str.size() }; }
+	static inline istring_view s2iv(std::string_view const & str) { return istring_view { str.data(), str.size() }; }
 }
 
 namespace std {
 	
 	template <> struct hash<meadow::istring> {
-		size_t operator() (meadow::istring const & str) const {
+		inline size_t operator() (meadow::istring const & str) const {
 			size_t h = 14695981039346656037UL;
 			for (char c : str) {
 				h ^= std::toupper(c);
@@ -61,7 +70,7 @@ namespace std {
 	};
 	
 	template <> struct hash<meadow::istring_view> {
-		size_t operator() (meadow::istring_view const & str) const {
+		inline size_t operator() (meadow::istring_view const & str) const {
 			size_t h = 14695981039346656037UL;
 			for (char c : str) {
 				h ^= std::toupper(c);
@@ -71,4 +80,13 @@ namespace std {
 		}
 	};
 	
+	static inline ostream & operator << (ostream & os, meadow::istring const & str) {
+		os << std::string_view { str.data(), str.size() };
+		return os;
+	}
+	
+	static inline ostream & operator << (ostream & os, meadow::istring_view const & str) {
+		os << std::string_view { str.data(), str.size() };
+		return os;
+	}
 }
