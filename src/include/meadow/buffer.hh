@@ -4,6 +4,8 @@
 #include <cstdint>
 #include <string>
 
+#include <algorithm>
+
 namespace meadow {
 	struct buffer;
 }

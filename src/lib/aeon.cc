@@ -292,7 +292,7 @@ static inline aeon::str_t json_parse_string(char const * & cur, char const * end
 		}
 		break;
 	}
-	if (cur >= end || cur == begin || escaped) throw_eoi;
+	if (cur >= end || escaped) throw_eoi;
 	cur++;
 	
 	return ss.str();

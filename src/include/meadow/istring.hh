@@ -10,6 +10,7 @@
 */
 
 #include <ostream>
+#include <sstream>
 #include <string>
 #include <string_view>
 
@@ -45,6 +46,7 @@ namespace meadow {
 
 	using istring = std::basic_string<char, insensitive_char_traits>;
 	using istring_view = std::basic_string_view<char, insensitive_char_traits>;
+	using istringstream = std::basic_stringstream<char, insensitive_char_traits>;
 
 	static inline std::string i2s(istring const & str) { return std::string { str.data(), str.size() }; }
 	static inline std::string i2s(istring_view const & str) { return std::string { str.data(), str.size() }; }

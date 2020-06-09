@@ -1,6 +1,7 @@
-#include "meadow/strop.hh"
+#include "meadow/stropc.hh"
 
 #include <cstdarg>
+#include <cstring>
 
 std::string meadow::strf(char const * fmt, ...) noexcept {
 	

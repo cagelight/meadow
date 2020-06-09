@@ -51,10 +51,19 @@ void test_aeon() {
 	}
 	
 	{
+		test = "";
+		TEST(test.is_string())
+		TEST(test == "");
+		TEST(test.serialize_json() == "\"\"")
+		TEST(test.deserialize_json("\"\"") == "")
+	}
+	
+	{
 		test = "test lawl";
 		TEST(test.is_string())
 		TEST(test == "test lawl");
 		TEST(test.serialize_json() == "\"test lawl\"")
+		TEST(test.deserialize_json("\"test lawl\"") == "test lawl")
 	}
 	
 	{
