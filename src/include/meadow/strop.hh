@@ -17,10 +17,10 @@
 namespace meadow {
 	
 	struct streamlogger {
-		using logger_cb = std::function<void(std::string const &)>;
+		using logger_cb = std::function<void(std::string_view)>;
 		logger_cb cb;
 		
-		inline streamlogger(std::string const & init = "", logger_cb cb = [](std::string const & str){ std::cout << str << std::endl; }) : cb(cb), m_ss() { m_ss << init; }
+		inline streamlogger(logger_cb cb = [](std::string_view str){ std::cout << str << std::endl; }) : cb(cb), m_ss() { }
 		inline ~streamlogger() { cb(m_ss.str()); }
 		
 		inline streamlogger & operator << ( std::string const & other ) { m_ss << other; return *this; }

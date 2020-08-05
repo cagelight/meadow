@@ -17,3 +17,4 @@ static inline T rndnum(T min, T max) {
 
 void test_aeon();
 void test_buffer();
+void test_brassica();

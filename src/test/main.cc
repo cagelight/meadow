@@ -6,7 +6,8 @@
 
 static std::map<std::string, void(*)()> const tests {
 	{"aeon", test_aeon},
-	{"buffer", test_buffer}
+	{"buffer", test_buffer},
+	{"brassica", test_brassica}
 };
 
 void print_usage() {
