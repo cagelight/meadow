@@ -2,7 +2,7 @@
 
 #include <array>
 #include <cstdint>
-#include <ctgmath>
+#include <cmath>
 #include <random>
 
 namespace meadow::brassica {

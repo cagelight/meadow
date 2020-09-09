@@ -42,6 +42,7 @@ void test_brassica() {
 	{
 		static_assert(std::is_trivial<b::vec2d>::value);
 		static_assert(std::is_standard_layout<b::vec2d>::value);
+		static_assert(sizeof(b::vec2d) == 16);
 		
 		b::vec2d a;
 		b::vec2d b {};

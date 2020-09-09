@@ -124,8 +124,8 @@ template <typename T> struct meadow::brassica::mat3 {
 	inline constexpr mat3 inverse() const {
 
 		T det = data[0][0] * (data[2][2] * data[1][1] - data[2][1] * data[1][2]) -
-				data[0][1] * (data[2][2] * data[1][0] - data[2][0] * data[1][2]) +
-				data[0][2] * (data[2][1] * data[1][0] - data[2][0] * data[1][1]);
+		        data[0][1] * (data[2][2] * data[1][0] - data[2][0] * data[1][2]) +
+		        data[0][2] * (data[2][1] * data[1][0] - data[2][0] * data[1][1]);
 		
 		return {
 			(data[2][2] * data[1][1] - data[2][1] * data[1][2]) / det,
