@@ -36,6 +36,7 @@ namespace meadow::brassica {
 	template <typename T> struct vec2;
 	template <typename T> struct vec3;
 	template <typename T> struct vec4;
+	template <typename T> struct mat3;
 	template <typename T> struct mat4;
 	template <typename T> struct quat;
 }

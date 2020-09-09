@@ -35,6 +35,7 @@ Modern and expressive (and constexpr when possible) mathematics library
 #include "brassica/vec2.hh"
 #include "brassica/vec3.hh"
 #include "brassica/vec4.hh"
+#include "brassica/mat3.hh"
 #include "brassica/mat4.hh"
 #include "brassica/quat.hh"
 
@@ -45,6 +46,8 @@ namespace meadow::brassica {
 	using vec3d = vec3<double>;
 	using vec4f = vec4<float>;
 	using vec4d = vec4<double>;
+	using mat3f = mat3<float>;
+	using mat3d = mat3<double>;
 	using mat4f = mat4<float>;
 	using mat4d = mat4<double>;
 	using quatf = quat<float>;
