@@ -23,8 +23,7 @@ namespace meadow {
 		inline streamlogger(logger_cb cb = [](std::string_view str){ std::cout << str << std::endl; }) : cb(cb), m_ss() { }
 		inline ~streamlogger() { cb(m_ss.str()); }
 		
-		inline streamlogger & operator << ( std::string const & other ) { m_ss << other; return *this; }
-		inline streamlogger & operator << ( char const * other ) { m_ss << other; return *this; }
+		inline streamlogger & operator << ( std::string_view other ) { m_ss << other; return *this; }
 		
 		template <typename T, std::enable_if_t<std::is_arithmetic_v<T>, int> = 0> 
 		inline streamlogger & operator << ( T const & other ) { m_ss << std::to_string(other); return *this; }
@@ -36,8 +35,7 @@ namespace meadow {
 	};
 	
 	struct stringbuilder {
-		inline stringbuilder & operator << ( std::string const & other ) { m_ss << other; return *this; }
-		inline stringbuilder & operator << ( char const * other ) { m_ss << other; return *this; }
+		inline stringbuilder & operator << ( std::string_view const & other ) { m_ss << other; return *this; }
 		
 		template <typename T, std::enable_if_t<std::is_arithmetic_v<T>, int> = 0> 
 		inline stringbuilder & operator << ( T const & other ) { m_ss << std::to_string(other); return *this; }

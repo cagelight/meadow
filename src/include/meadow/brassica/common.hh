@@ -25,6 +25,10 @@ namespace meadow::brassica {
 		return static_cast<T>((static_cast<L>(1) - v) * A) + static_cast<T>(v * B);
 	}
 
+	template <typename T, typename F = double> [[nodiscard]] static T square_up(F in) {
+		return static_cast<T>(2) << static_cast<T>(std::floor(std::log2(in - static_cast<F>(1))));
+	}
+
 	[[nodiscard]] inline constexpr size_t hash_combine(size_t A, size_t B) {
 		return A + 0x9e3779b9 + (B << 6) + (B >> 2);
 	}
