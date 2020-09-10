@@ -38,6 +38,7 @@ Modern and expressive (and constexpr when possible) mathematics library
 #include "brassica/mat3.hh"
 #include "brassica/mat4.hh"
 #include "brassica/quat.hh"
+#include "brassica/geometry.hh"
 
 namespace meadow::brassica {
 	using vec2f = vec2<float>;

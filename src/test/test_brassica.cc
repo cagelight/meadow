@@ -157,4 +157,17 @@ void test_brassica() {
 		TEST(test_t(2, 6, 8) * 2 == test_t(4, 12, 16));
 		TEST(test_t(2, 6, 8) / 2 == test_t(1, 3, 4));
 	}
+	
+	{
+		using vec_t = b::vec3<double>;
+		using plane_t = b::plane<double>;
+		
+		vec_t t1, t2, t3;
+		t1 = { 0, 4, 0 };
+		t2 = { 5, 0, 0 };
+		t3 = { 0, 0, 0 };
+		
+		plane_t p1 { t1, t2, t3 };
+		auto v1 = plane_t::intersection(p1, p1, p1);
+	}
 }

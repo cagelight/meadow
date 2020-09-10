@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common.hh"
+#include "vec3.hh"
 
 template <typename T> struct meadow::brassica::mat3 {
 
@@ -9,7 +10,7 @@ template <typename T> struct meadow::brassica::mat3 {
 	// ================================================================
 
 	using value_type = T;
-	using row_type = std::array<T, 3>;
+	using row_type = vec3<T>;
 	using data_type = std::array<row_type, 3>;
 	data_type data;
 	
@@ -24,10 +25,11 @@ template <typename T> struct meadow::brassica::mat3 {
 		0, 0, v
 	} {}
 	inline constexpr mat3(
-		data_type const & v0,
-		data_type const & v1,
-		data_type const & v2
+		row_type const & v0,
+		row_type const & v1,
+		row_type const & v2
 	) : data { v0, v1, v2 } {}
+	
 	inline constexpr mat3(
 		T const & v00, T const & v01, T const & v02,
 		T const & v10, T const & v11, T const & v12,

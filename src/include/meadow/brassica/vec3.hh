@@ -29,12 +29,31 @@ template <typename T> struct meadow::brassica::vec3 {
 	explicit inline constexpr vec3(vec3<U> const & v) : data { static_cast<T>(v[0]), static_cast<T>(v[1]), static_cast<T>(v[2]) } {}
 	
 	// ================================================================
+	// GENERAL
+	// ================================================================
+	
+	inline constexpr bool is_real() const {
+		return 
+			!std::isnan(data[0]) &&
+			!std::isnan(data[1]) &&
+			!std::isnan(data[2]) && 
+			!std::isinf(data[0]) &&
+			!std::isinf(data[1]) &&
+			!std::isinf(data[2]);
+	}
+	
+	// ================================================================
 	// LINEAR ALGEBRA
 	// ================================================================
 	
 	[[nodiscard]]
+	inline constexpr T magnitude_squared() const {
+		return dot(*this);
+	}
+	
+	[[nodiscard]]
 	inline T magnitude() const {
-		return static_cast<T>( std::sqrt((data[0] * data[0]) + (data[1] * data[1]) + (data[2] * data[2])) );
+		return static_cast<T>( std::sqrt(magnitude_squared()) );
 	}
 	
 	inline T & normalize() { 

@@ -29,8 +29,30 @@ template <typename T> struct meadow::brassica::vec2 {
 	explicit inline constexpr vec2(vec2<U> const & v) : data { static_cast<T>(v[0]), static_cast<T>(v[1]) } {}
 	
 	// ================================================================
+	// GENERAL
+	// ================================================================
+	
+	inline constexpr bool is_real() const {
+		return 
+			!std::isnan(data[0]) && 
+			!std::isnan(data[1]) && 
+			!std::isinf(data[0]) && 
+			!std::isinf(data[1]);
+	}
+	
+	// ================================================================
 	// LINEAR ALGEBRA
 	// ================================================================
+	
+	[[nodiscard]]
+	inline constexpr T magnitude_squared() const {
+		return dot(*this);
+	}
+	
+	[[nodiscard]]
+	inline T magnitude() const {
+		return static_cast<T>( std::sqrt(magnitude_squared()) );
+	}
 	
 	[[nodiscard]]
 	static inline constexpr T dot(vec2 const & A, vec2 const & B) {
@@ -39,11 +61,6 @@ template <typename T> struct meadow::brassica::vec2 {
 	[[nodiscard]]
 	inline constexpr T dot(vec2 const & other) const {
 		return dot(*this, other);
-	}
-	
-	[[nodiscard]]
-	inline T magnitude() const {
-		return static_cast<T>( std::sqrt((data[0] * data[0]) + (data[1] * data[1])) );
 	}
 	
 	inline T & normalize() { 

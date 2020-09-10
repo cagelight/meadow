@@ -39,4 +39,7 @@ namespace meadow::brassica {
 	template <typename T> struct mat3;
 	template <typename T> struct mat4;
 	template <typename T> struct quat;
+
+	// geometry.hh
+	template <typename T> struct plane;
 }

@@ -29,12 +29,28 @@ template <typename T> struct meadow::brassica::vec4 {
 	explicit inline constexpr vec4(vec4<U> const & v) : data { static_cast<T>(v[0]), static_cast<T>(v[1]), static_cast<T>(v[2]), static_cast<T>(v[3]) } {}
 	
 	// ================================================================
+	// GENERAL
+	// ================================================================
+	
+	inline constexpr bool is_real() const {
+		return 
+			!std::isnan(data[0]) &&
+			!std::isnan(data[1]) &&
+			!std::isnan(data[2]) &&
+			!std::isnan(data[3]) &&
+			!std::isinf(data[0]) &&
+			!std::isinf(data[1]) &&
+			!std::isinf(data[2]) &&
+			!std::isinf(data[3]);
+	}
+	
+	// ================================================================
 	// LINEAR ALGEBRA
 	// ================================================================
 	
 	[[nodiscard]]
 	inline constexpr T magnitude_squared() const {
-		return (data[0] * data[0]) + (data[1] * data[1]) + (data[2] * data[2]) + (data[3] * data[3]);
+		return dot(*this);
 	}
 	
 	[[nodiscard]]
