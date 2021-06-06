@@ -13,7 +13,7 @@ template <typename T> struct meadow::brassica::plane {
 	using dist_type = T;
 	
 	norm_type normal;
-	dist_type dist;
+	dist_type distance;
 	
 	// ================================================================
 	// CONSTRUCTION
@@ -22,7 +22,7 @@ template <typename T> struct meadow::brassica::plane {
 	inline constexpr plane() = default;
 	inline constexpr plane(norm_type const & norm, dist_type const & dist)
 		: normal { norm },
-		  dist { dist }
+		  distance { dist }
 	{}
 	
 	inline constexpr plane(plane const &) = default;
@@ -31,11 +31,11 @@ template <typename T> struct meadow::brassica::plane {
 	template <typename U> 
 	explicit inline constexpr plane(plane<U> const & v)
 		: normal { static_cast<norm_type>(v.normal) }, 
-		  dist { static_cast<dist_type>(v.dist) } {}
+		  distance { static_cast<dist_type>(v.dist) } {}
 	
 	inline constexpr plane(vec3<T> const & p1, vec3<T> const & p2, vec3<T> const & p3)
 		: normal { (p2 - p1).cross(p3 - p1).normalized() },
-		  dist { -p1.dot(normal) }
+		  distance { -p1.dot(normal) }
 	{}
 	
 	// ================================================================
@@ -43,6 +43,6 @@ template <typename T> struct meadow::brassica::plane {
 	// ================================================================
 	
 	static inline constexpr vec3<T> intersection(plane const & p1, plane const & p2, plane const & p3) {
-		return mat3<T> { p1.normal, p2.normal, p3.normal } .inverse() * vec3<T> { p1.dist, p2.dist, p3.dist };
+		return mat3<T> { p1.normal, p2.normal, p3.normal } .inverse() * vec3<T> { p1.distance, p2.distance, p3.distance };
 	}
 };

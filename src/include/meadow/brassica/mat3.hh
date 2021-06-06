@@ -19,11 +19,11 @@ template <typename T> struct meadow::brassica::mat3 {
 	// ================================================================
 	
 	inline constexpr mat3() = default;
-	inline constexpr mat3(T const & v) : data {
-		v, 0, 0,
-		0, v, 0,
-		0, 0, v
-	} {}
+	inline constexpr mat3(T const & v) : data {{
+		{ v, 0, 0 },
+		{ 0, v, 0 },
+		{ 0, 0, v }
+	}} {}
 	inline constexpr mat3(
 		row_type const & v0,
 		row_type const & v1,

@@ -28,12 +28,14 @@ file( GLOB_RECURSE TEST_FILES
 	"${CMAKE_SOURCE_DIR}/src/test/*.cc"
 )
 
+find_package( SDL2 REQUIRED )
+
 add_executable( meadow_tests ${TEST_FILES} )
 set_target_properties( meadow PROPERTIES
 	SOVERSION 0
 	VERSION   ${PROJECT_VERSION}
 )
-target_link_libraries( meadow_tests PUBLIC meadow )
+target_link_libraries( meadow_tests PUBLIC meadow "-lpthread" SDL2::SDL2 )
 install( TARGETS meadow_tests RUNTIME DESTINATION "bin" )
 
 install( 

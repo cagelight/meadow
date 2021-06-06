@@ -32,6 +32,7 @@ template <typename T> struct meadow::brassica::vec2 {
 	// GENERAL
 	// ================================================================
 	
+	[[nodiscard]]
 	inline constexpr bool is_real() const {
 		return 
 			!std::isnan(data[0]) && 

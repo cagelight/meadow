@@ -5,6 +5,7 @@
 #include <string>
 
 #include <algorithm>
+#include <numeric>
 
 namespace meadow {
 	struct buffer;

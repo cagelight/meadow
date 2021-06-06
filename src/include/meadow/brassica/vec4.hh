@@ -19,6 +19,7 @@ template <typename T> struct meadow::brassica::vec4 {
 	inline constexpr vec4() = default;
 	inline constexpr vec4(data_type v) : data { v } {};
 	inline constexpr vec4(T x, T y, T z, T w) : data { x, y, z, w } {};
+	inline constexpr vec4(vec3<T> const & xyz, T w) : data { xyz[0], xyz[1], xyz[2], w } {};
 	
 	explicit inline constexpr vec4(T const & v) : data { v, v, v, v } {};
 	
@@ -32,6 +33,12 @@ template <typename T> struct meadow::brassica::vec4 {
 	// GENERAL
 	// ================================================================
 	
+	[[nodiscard]]
+	inline constexpr vec3<T> xyz() const {
+		return { data[0], data[1], data[2] };
+	}
+	
+	[[nodiscard]]
 	inline constexpr bool is_real() const {
 		return 
 			!std::isnan(data[0]) &&

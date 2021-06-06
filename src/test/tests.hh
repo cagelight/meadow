@@ -19,3 +19,5 @@ void test_aeon();
 void test_buffer();
 void test_brassica();
 void test_bspacker();
+void test_noise();
+void test_undae();
