@@ -65,7 +65,7 @@ template <typename T> struct meadow::brassica::vec4 {
 		return static_cast<T>( std::sqrt(magnitude_squared()) );
 	}
 	
-	inline T & normalize() { 
+	inline T normalize() { 
 		T mag = magnitude();
 		operator /= (mag);
 		return mag;

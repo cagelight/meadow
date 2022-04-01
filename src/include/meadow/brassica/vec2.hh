@@ -64,7 +64,7 @@ template <typename T> struct meadow::brassica::vec2 {
 		return dot(*this, other);
 	}
 	
-	inline T & normalize() { 
+	inline T normalize() { 
 		T mag = magnitude();
 		operator /= (mag);
 		return mag;

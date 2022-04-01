@@ -10,6 +10,8 @@ static std::map<std::string, void(*)()> const tests {
 	{"brassica", test_brassica},
 	{"bspacker", test_bspacker},
 	{"noise", test_noise},
+	{"pegleg", test_pegleg},
+	{"strop", test_strop},
 	{"undae", test_undae}
 };
 

@@ -7,7 +7,8 @@ namespace b = brassica;
 
 #define PERM(v) perm[static_cast<uint8_t>(v)]
 
-static constexpr bool CLAMP_OUTPUTS = true;
+// disable for heuristic adjustment testing
+static constexpr bool CLAMP_OUTPUTS = false;
 
 // ================================================================================================================================
 /*
@@ -20,7 +21,7 @@ static constexpr bool CLAMP_OUTPUTS = true;
 */
 // ================================================================================================================================
 
-static constexpr double HEURISTIC_2D = 45.23065;
+static constexpr double HEURISTIC_2D = 45.23064;
 
 static double const F2 = 0.5 * (sqrt(3.0) - 1.0);
 static double const G2 = (3.0 - sqrt(3.0)) / 6.0;
@@ -240,7 +241,7 @@ double noise::simplex::generate(double x, double y, double z) const {
 */
 // ================================================================================================================================
 
-static constexpr double HEURISTIC_4D = 27.230;
+static constexpr double HEURISTIC_4D = 27.228;
 
 static constexpr b::vec4d GRAD4[] = {
 	{0,1,1,1},  {0,1,1,-1},  {0,1,-1,1},  {0,1,-1,-1},

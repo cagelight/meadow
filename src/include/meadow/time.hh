@@ -107,6 +107,10 @@ namespace meadow {
 				return now() - m_mark;
 			}
 			
+			inline void buffer() {
+				nanosleep( &m_target, nullptr );
+			}
+			
 			inline unit mark_and_sleep() {
 				unit n = now();
 				unit span = n - m_mark;

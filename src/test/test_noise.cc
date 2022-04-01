@@ -1,6 +1,7 @@
 #include "tests.hh"
 
 #include "meadow/noise.hh"
+#include "meadow/time.hh"
 
 #include <future>
 #include <random>
@@ -9,11 +10,11 @@
 
 void test_noise() {
 	
-	static constexpr int64_t DIST_LIM = 1 << 20;
+	static constexpr int64_t DIST_LIM = 1 << 26;
 	
-	static constexpr size_t TEST_COUNT_2D = 2000000;
-	static constexpr size_t TEST_COUNT_3D = 20000;
-	static constexpr size_t TEST_COUNT_4D = 20000;
+	static constexpr size_t TEST_COUNT_2D = 500000;
+	static constexpr size_t TEST_COUNT_3D = 500000;
+	static constexpr size_t TEST_COUNT_4D = 500000;
 	
 	static size_t TEST_THREAD_COUNT = std::thread::hardware_concurrency();
 	
@@ -25,6 +26,8 @@ void test_noise() {
 	tn2.seed(rng);
 	
 	std::uniform_real_distribution<double> dist { -DIST_LIM, DIST_LIM };
+	
+	tlog << meadow::strf("Sample Area: (%li, %li)", -DIST_LIM, DIST_LIM);
 	
 	struct ThreadCache {
 		double avg = 0;
@@ -61,90 +64,74 @@ void test_noise() {
 		return master;
 	};
 	
-	tlog << "================================";
-	tlog << "Starting 2D Test";
-	tlog << "--------------------------------";
-	{
-		
-		ThreadCache result = run_test([&](){
-			ThreadCache tc;
+	auto test_set = [run_test](char const * d, std::function<ThreadCache()> tfunc) {
+		tlog << "========================================";
+		tlog << "Starting " << d << " Test";
+		tlog << "----------------------------------------";
+		{
+			meadow::time<CLOCK_PROCESS_CPUTIME_ID>::keeper tk;
+			ThreadCache result = run_test(tfunc);
+			auto tp = tk.mark();
 			
-			for (size_t i = 0; i < TEST_COUNT_2D; i++) {
-				double v = tn2.generate(dist(rng), dist(rng));
-				tc.avg += v;
-				if (v < tc.min) tc.min = v;
-				if (v > tc.max) tc.max = v;
-			}
+			double err = result.max > -result.min ? result.max : -result.min;
 			
-			tc.avg /= TEST_COUNT_2D;
+			std::ostringstream ss;
+			ss.precision(10);
+			ss << "Average: " << result.avg << "\n";
+			ss << "Minimum: " << result.min << "\n";
+			ss << "Maximum: " << result.max << "\n";
+			ss << "Hueristic Adjustment: " << 1 / err << "\n";
+			ss.precision(6);
+			ss << "CPU Time: " << tp.seconds() << "s";
+			tlog << ss.str();
 			
-			return tc;
-		});
-		
-		double err = result.max > -result.min ? result.max : -result.min;
-		
-		tlog << "Average: " << result.avg;
-		tlog << "Minimum: " << result.min;
-		tlog << "Maximum: " << result.max;
-		tlog << "Hueristic Adjustment: " << 1 / err;
-	}
-	tlog << "================================\n\n";
+			TEST_MSG(err <= 1, "A result exceeded normalized range, please adjust heuristic!");
+		}
+		tlog << "========================================\n\n";
+	};
 	
-	tlog << "================================";
-	tlog << "Starting 3D Test";
-	tlog << "--------------------------------";
-	{
+	test_set("2D", [&](){
+		ThreadCache tc;
 		
-		ThreadCache result = run_test([&](){
-			ThreadCache tc;
-			
-			for (size_t i = 0; i < TEST_COUNT_3D; i++) {
-				double v = tn2.generate(dist(rng), dist(rng), dist(rng));
-				tc.avg += v;
-				if (v < tc.min) tc.min = v;
-				if (v > tc.max) tc.max = v;
-			}
-			
-			tc.avg /= TEST_COUNT_3D;
-			
-			return tc;
-		});
+		for (size_t i = 0; i < TEST_COUNT_2D; i++) {
+			double v = tn2.generate(dist(rng), dist(rng));
+			tc.avg += v;
+			if (v < tc.min) tc.min = v;
+			if (v > tc.max) tc.max = v;
+		}
 		
-		double err = result.max > -result.min ? result.max : -result.min;
+		tc.avg /= TEST_COUNT_2D;
 		
-		tlog << "Average: " << result.avg;
-		tlog << "Minimum: " << result.min;
-		tlog << "Maximum: " << result.max;
-		tlog << "Hueristic Adjustment: " << 1 / err;
-	}
-	tlog << "================================\n\n";
+		return tc;
+	});
 	
-	tlog << "================================";
-	tlog << "Starting 4D Test";
-	tlog << "--------------------------------";
-	{
+	test_set("3D", [&](){
+		ThreadCache tc;
 		
-		ThreadCache result = run_test([&](){
-			ThreadCache tc;
-			
-			for (size_t i = 0; i < TEST_COUNT_4D; i++) {
-				double v = tn2.generate(dist(rng), dist(rng), dist(rng), dist(rng));
-				tc.avg += v;
-				if (v < tc.min) tc.min = v;
-				if (v > tc.max) tc.max = v;
-			}
-			
-			tc.avg /= TEST_COUNT_4D;
-			
-			return tc;
-		});
+		for (size_t i = 0; i < TEST_COUNT_3D; i++) {
+			double v = tn2.generate(dist(rng), dist(rng), dist(rng));
+			tc.avg += v;
+			if (v < tc.min) tc.min = v;
+			if (v > tc.max) tc.max = v;
+		}
 		
-		double err = result.max > -result.min ? result.max : -result.min;
+		tc.avg /= TEST_COUNT_3D;
 		
-		tlog << "Average: " << result.avg;
-		tlog << "Minimum: " << result.min;
-		tlog << "Maximum: " << result.max;
-		tlog << "Hueristic Adjustment: " << 1 / err;
-	}
-	tlog << "================================\n\n";
+		return tc;
+	});
+	
+	test_set("4D", [&](){
+		ThreadCache tc;
+		
+		for (size_t i = 0; i < TEST_COUNT_4D; i++) {
+			double v = tn2.generate(dist(rng), dist(rng), dist(rng), dist(rng));
+			tc.avg += v;
+			if (v < tc.min) tc.min = v;
+			if (v > tc.max) tc.max = v;
+		}
+		
+		tc.avg /= TEST_COUNT_4D;
+		
+		return tc;
+	});
 }

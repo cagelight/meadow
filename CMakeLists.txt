@@ -7,7 +7,7 @@ set( CMAKE_CONFIGURATION_TYPES "Debug;Release;Native" )
 set( CMAKE_CXX_FLAGS         "-std=c++20" )
 set( CMAKE_CXX_FLAGS_DEBUG   "-Wall -Wextra -Wpedantic -Og -march=core2 -mtune=native -ggdb3" )
 set( CMAKE_CXX_FLAGS_RELEASE "-w -O2 -march=core2 -mtune=generic -DNDEBUG" )
-set( CMAKE_CXX_FLAGS_NATIVE  "-w -Ofast -march=native -mtune=native -DNDEBUG" )
+set( CMAKE_CXX_FLAGS_NATIVE  "-w -Os -ffast-math -march=native -mtune=native -DNDEBUG" )
 
 if( NOT CMAKE_BUILD_TYPE )
 	set( CMAKE_BUILD_TYPE Release )
@@ -37,6 +37,10 @@ set_target_properties( meadow PROPERTIES
 )
 target_link_libraries( meadow_tests PUBLIC meadow "-lpthread" SDL2::SDL2 )
 install( TARGETS meadow_tests RUNTIME DESTINATION "bin" )
+
+add_executable( nametool "${CMAKE_SOURCE_DIR}/src/tools/nametool.cc" )
+target_link_libraries( nametool PUBLIC meadow )
+install( TARGETS nametool RUNTIME DESTINATION "bin" )
 
 install( 
 	DIRECTORY "${CMAKE_SOURCE_DIR}/src/include/meadow" 
