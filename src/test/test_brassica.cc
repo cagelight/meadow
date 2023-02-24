@@ -1,7 +1,12 @@
 #include "tests.hh"
 
 #include "meadow/brassica.hh"
+#include "meadow/brassica/matn_dynamic.hh"
 namespace b = meadow::brassica;
+
+#include "meadow/time.hh"
+
+#include <memory>
 
 template <typename T>
 bool EXPECT(T res, T exp) {
@@ -12,6 +17,8 @@ bool EXPECT(T res, T exp) {
 }
 
 void test_brassica() {
+	
+	std::mt19937_64 rng { std::random_device{}() };
 	
 	float pi = b::pi<float>;
 	float pi2 = b::pi_m<float>(2);
@@ -169,5 +176,180 @@ void test_brassica() {
 		
 		plane_t p1 { t1, t2, t3 };
 		auto v1 = plane_t::intersection(p1, p1, p1);
+	}
+	
+	{
+		using matn_t = b::matn_dynamic<double>;
+		
+		matn_t mat1 {7, 4};
+		TEST(mat1.width() == 7);
+		TEST(mat1.height() == 4);
+		mat1.at(2, 3) = 1.5;
+		TEST(mat1.row(3)[2] == 1.5);
+		
+		matn_t mat2 {7, 4};
+		mat2.at(2, 3) = 1.5;
+		mat2 += 5;
+		
+		mat2 += mat1;
+		TEST(mat2.at(2, 3) == 8)
+		
+		matn_t mat3 = mat1 + mat2;
+		TEST(mat1.at(2, 3) == 1.5)
+		TEST(mat2.at(2, 3) == 8)
+		TEST(mat3.at(2, 3) == 9.5)
+		TEST(mat3.at(0, 0) == 5)
+		
+		matn_t mat4 {3, 2}, mat5 {1, 3};
+		mat4.fill(5);
+		mat5.fill(3);
+		matn_t mat6 = matn_t::multiply(mat4, mat5);
+		TEST(mat6.width() == 1)
+		TEST(mat6.height() == 2)
+		TEST(mat6.at(0, 0) == 45)
+		TEST(mat6.at(0, 1) == 45)
+	}
+	
+	{ // MAT4 vs MATN speed test
+		using mat4 = b::mat4<double>;
+		using matn = b::matn<double, 4, 4>;
+		using matd = b::matn_dynamic<double>;
+		
+		static_assert(std::is_trivial<mat4>::value);
+		static_assert(std::is_standard_layout<mat4>::value);
+		static_assert(std::is_trivial<matn>::value);
+		static_assert(std::is_standard_layout<matn>::value);
+		
+		constexpr size_t TCOUNT = 5000000;
+		
+		meadow::time<CLOCK_PROCESS_CPUTIME_ID>::keeper tk;
+		
+		std::uniform_real_distribution<double> dist {-1, 1};
+		
+		mat4 m4a {dist(rng), dist(rng), dist(rng), dist(rng), dist(rng), dist(rng), dist(rng), dist(rng), dist(rng), dist(rng), dist(rng), dist(rng), dist(rng), dist(rng), dist(rng), dist(rng)};
+		mat4 m4b { m4a };
+		
+		matn mna;
+		for (auto & v : mna.data) v = dist(rng);
+		matn mnb { mna };
+		
+		matd mda {4, 4};
+		for (auto & v : mda.data()) v = dist(rng);
+		matd mdb { mda };
+		
+		auto m4t = m4a.transpose();
+		TEST(m4t[1][3] == m4a[3][1]);
+		
+		matn mnt = mna.transpose();
+		TEST(mna.at(1, 3) = mnt.at(3, 1))
+		
+		matd mdt = mda.transpose();
+		TEST(mda.at(1, 3) = mnt.at(3, 1))
+		
+		tlog << "================================================================";
+		tlog << "Running MAT4 vs MATN vs MATN_DYNAMIC performance tests";
+		tlog << TCOUNT << " iterations.";
+		tlog << "----------------";
+		
+		tk.mark();
+		for (size_t i = 0; i < TCOUNT; i++) {
+			auto m4c = m4a * m4b;
+			benchmark::DoNotOptimize(m4c);
+		}
+		tlog << "MAT4 Multiplication: " << tk.mark().seconds() << "s";
+		
+		tk.mark();
+		for (size_t i = 0; i < TCOUNT; i++) {
+			auto mnc = mna.multiply(mnb);
+			benchmark::DoNotOptimize(mnc);
+		}
+		tlog << "MATN Multiplication: " << tk.mark().seconds() << "s";
+		
+		tk.mark();
+		for (size_t i = 0; i < TCOUNT; i++) {
+			auto mdc = matd::multiply(mda, mdb);
+			benchmark::DoNotOptimize(mdc);
+		}
+		tlog << "MATD Multiplication: " << tk.mark().seconds() << "s";
+		
+		tk.mark();
+		for (size_t i = 0; i < TCOUNT; i++) {
+			auto m4c = m4a.transpose();
+			benchmark::DoNotOptimize(m4c);
+		}
+		tlog << "MAT4 Transpose: " << tk.mark().seconds() << "s";
+		
+		tk.mark();
+		for (size_t i = 0; i < TCOUNT; i++) {
+			auto mnc = mna.transpose();
+			benchmark::DoNotOptimize(mnc);
+		}
+		tlog << "MATN Transpose: " << tk.mark().seconds() << "s";
+		
+		tk.mark();
+		for (size_t i = 0; i < TCOUNT; i++) {
+			auto mdc = mda.transpose();
+			benchmark::DoNotOptimize(mdc);
+		}
+		tlog << "MATD Transpose: " << tk.mark().seconds() << "s";
+		
+		tlog << "================================================================";
+	}
+	
+	{ // MATN vs MATD speed test
+		constexpr size_t MAT_SIZE = 64;
+		
+		using matn = b::matn<double, MAT_SIZE, MAT_SIZE>;
+		using matd = b::matn_dynamic<double>;
+		
+		constexpr size_t TCOUNT = 5000;
+		
+		meadow::time<CLOCK_PROCESS_CPUTIME_ID>::keeper tk;
+		
+		std::uniform_real_distribution<double> dist {-1, 1};
+		
+		
+		auto mna = std::make_unique<matn>();
+		for (auto & v : mna->data) v = dist(rng);
+		auto mnb = std::make_unique<matn>(*mna);
+		
+		auto mda = std::make_unique<matd>(MAT_SIZE, MAT_SIZE);
+		for (auto & v : mda->data()) v = dist(rng);
+		auto mdb = std::make_unique<matd>(*mda);
+		
+		tlog << "================================================================";
+		tlog << "Running MATN vs MATN_DYNAMIC large matrix (" << MAT_SIZE << "x" << MAT_SIZE << ") performance tests";
+		tlog << TCOUNT << " iterations.";
+		tlog << "----------------";
+		
+		tk.mark();
+		for (size_t i = 0; i < TCOUNT; i++) {
+			auto mnc = mna->multiply(*mnb);
+			benchmark::DoNotOptimize(mnc);
+		}
+		tlog << "MATN Multiplication: " << tk.mark().seconds() << "s";
+		
+		tk.mark();
+		for (size_t i = 0; i < TCOUNT; i++) {
+			auto mdc = matd::multiply(*mda, *mdb);
+			benchmark::DoNotOptimize(mdc);
+		}
+		tlog << "MATD Multiplication: " << tk.mark().seconds() << "s";
+		
+		tk.mark();
+		for (size_t i = 0; i < TCOUNT; i++) {
+			auto mnc = mna->transpose();
+			benchmark::DoNotOptimize(mnc);
+		}
+		tlog << "MATN Transpose: " << tk.mark().seconds() << "s";
+		
+		tk.mark();
+		for (size_t i = 0; i < TCOUNT; i++) {
+			auto mdc = mda->transpose();
+			benchmark::DoNotOptimize(mdc);
+		}
+		tlog << "MATD Transpose: " << tk.mark().seconds() << "s";
+		
+		tlog << "================================================================";
 	}
 }

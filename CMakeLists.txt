@@ -2,12 +2,13 @@ cmake_minimum_required( VERSION 3.15 )
 project( meadow VERSION 0.0.1 )
 
 enable_language( CXX )
+set( CMAKE_CXX_STANDARD 20 )
 set( CMAKE_CONFIGURATION_TYPES "Debug;Release;Native" )
 
-set( CMAKE_CXX_FLAGS         "-std=c++20" )
+set( CMAKE_CXX_FLAGS         "" )
 set( CMAKE_CXX_FLAGS_DEBUG   "-Wall -Wextra -Wpedantic -Og -march=core2 -mtune=native -ggdb3" )
 set( CMAKE_CXX_FLAGS_RELEASE "-w -O2 -march=core2 -mtune=generic -DNDEBUG" )
-set( CMAKE_CXX_FLAGS_NATIVE  "-w -Os -ffast-math -march=native -mtune=native -DNDEBUG" )
+set( CMAKE_CXX_FLAGS_NATIVE  "-w -Ofast -march=native -mtune=native -DNDEBUG" )
 
 if( NOT CMAKE_BUILD_TYPE )
 	set( CMAKE_BUILD_TYPE Release )
@@ -35,7 +36,7 @@ set_target_properties( meadow PROPERTIES
 	SOVERSION 0
 	VERSION   ${PROJECT_VERSION}
 )
-target_link_libraries( meadow_tests PUBLIC meadow "-lpthread" SDL2::SDL2 )
+target_link_libraries( meadow_tests PUBLIC meadow "-lpthread -lbenchmark" SDL2::SDL2 )
 install( TARGETS meadow_tests RUNTIME DESTINATION "bin" )
 
 add_executable( nametool "${CMAKE_SOURCE_DIR}/src/tools/nametool.cc" )

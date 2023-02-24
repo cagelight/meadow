@@ -1,11 +1,27 @@
 #pragma once
 
+#include <algorithm>
 #include <array>
 #include <cstdint>
 #include <cmath>
 #include <random>
+#include <stdexcept>
+#include <string>
 
 namespace meadow::brassica {
+	
+	struct brassica_error : public std::exception {
+		
+		brassica_error() = delete;
+		brassica_error(std::string what) : m_what(what) {}
+		
+		char const * what() const noexcept override {
+			return m_what.data();
+		}
+		
+	private:
+		std::string m_what;
+	};
 
 	template <typename T> inline constexpr T pi = static_cast<T>( 3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825342117067982148086513282306647093844609550582231725359408128481117450284102701938521105559644622948954930381964428810975665933446128475648233786783165271201909145649L );
 	template <typename T> [[nodiscard]] inline consteval T pi_m(T mult) { return mult * pi<T>; }
@@ -39,6 +55,9 @@ namespace meadow::brassica {
 	template <typename T> struct mat3;
 	template <typename T> struct mat4;
 	template <typename T> struct quat;
+	
+	template <typename T, size_t X, size_t Y> struct matn;
+	template <typename T> struct matn_dynamic;
 
 	// geometry.hh
 	template <typename T> struct plane;

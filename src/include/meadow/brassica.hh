@@ -37,6 +37,7 @@ Modern and expressive (and constexpr when possible) mathematics library
 #include "brassica/vec4.hh"
 #include "brassica/mat3.hh"
 #include "brassica/mat4.hh"
+#include "brassica/matn.hh"
 #include "brassica/quat.hh"
 #include "brassica/geometry.hh"
 

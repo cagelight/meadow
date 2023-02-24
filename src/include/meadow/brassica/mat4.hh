@@ -147,6 +147,16 @@ template <typename T> struct meadow::brassica::mat4 {
 	// ================================================================
 	
 	[[nodiscard]]
+	inline constexpr mat4 transpose() const {
+		return {
+			data[0][0], data[1][0], data[2][0], data[3][0],
+			data[0][1], data[1][1], data[2][1], data[3][1],
+			data[0][2], data[1][2], data[2][2], data[3][2],
+			data[0][3], data[1][3], data[2][3], data[3][3]
+		};
+	}
+	
+	[[nodiscard]]
 	static constexpr mat4 multiply(mat4 const & B, mat4 const & A) {
 		return {
 			A[0][0] * B[0][0] + A[0][1] * B[1][0] + A[0][2] * B[2][0] + A[0][3] * B[3][0],

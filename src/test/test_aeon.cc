@@ -2,6 +2,8 @@
 
 #include "meadow/aeon.hh"
 
+#include <utility>
+
 using aeon = meadow::aeon;
 
 void test_aeon() {
@@ -130,12 +132,12 @@ void test_aeon() {
 	{
 		constexpr char gen_chars [] = {"abcdefg0123456789\"\r\n ,:.[][][][][][]{}{}{}{}{}{}{}{}{}{}{}"};
 		for (size_t i = 0; i < 1000000; i++) {
-			std::ostringstream ss;
+			std::array<char, 32> str;
 			for (size_t j = 0; j < 32; j++) {
-				ss << gen_chars[rndnum<size_t>(0, sizeof(gen_chars) - 1)];
+				str[j] = gen_chars[rndnum<size_t>(0, sizeof(gen_chars) - 1)];
 			}
 			try {
-				auto meh = aeon::deserialize_json(ss.str());
+				auto meh = aeon::deserialize_json(std::string_view(str.begin(), 32));
 			} catch (...) {}
 		}
 	}

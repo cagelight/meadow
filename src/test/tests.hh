@@ -3,6 +3,8 @@
 #include "meadow/strop.hh"
 #include "meadow/stropc.hh"
 
+#include <benchmark/benchmark.h>
+
 #include <random>
 
 #define tlog meadow::streamlogger {}
@@ -26,6 +28,7 @@ void test_buffer();
 void test_brassica();
 void test_bspacker();
 void test_noise();
+void test_oceanus();
 void test_pegleg();
 void test_strop();
 void test_undae();

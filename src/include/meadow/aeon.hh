@@ -130,7 +130,7 @@ public:
 	[[nodiscard]] std::string serialize_json() const;
 	[[nodiscard]] static aeon deserialize_json(char const * begin, char const * end);
 	
-	[[nodiscard]] inline static aeon deserialize_json(std::string const & str) { return deserialize_json(str.c_str(), str.c_str() + str.size()); }
+	[[nodiscard]] inline static aeon deserialize_json(std::string_view str) { return deserialize_json(str.data(), str.data() + str.size()); }
 	
 	// ================================================================
 	// OPERATORS
